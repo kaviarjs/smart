@@ -9,6 +9,8 @@
   </a>
 </p>
 
+Goodies:
+
 ✅ Uses React Hooks behind the scenes
 ✅ Manage state and actions separately from your components
 ✅ TypeScript auto-completion at every step
