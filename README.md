@@ -4,8 +4,9 @@
   <a href="https://travis-ci.org/kaviarjs/smart">
     <img src="https://api.travis-ci.org/kaviarjs/smart.svg?branch=master" />
   </a>
+  
   <a href="https://coveralls.io/github/kaviarjs/smart?branch=master">
-    <img src="https://coveralls.io/repos/github/kaviarjs/smart/smart.svg?branch=master" />
+    <img src="https://coveralls.io/repos/github/kaviarjs/smart/badge.svg?branch=master" />
   </a>
 </p>
 
