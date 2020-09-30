@@ -11,16 +11,39 @@
 
 Goodies:
 
-✅ Uses React Hooks behind the scenes
-✅ Manage state and actions separately from your components
-✅ TypeScript auto-completion at every step
-✅ Ultra light-weight
-✅ Works great with Redux DevTools
+- ✅ Uses React Hooks behind the scenes
+- ✅ Manage state and actions separately from your components
+- ✅ TypeScript auto-completion at every step
+- ✅ Ultra light-weight
+- ✅ Works great with Redux DevTools
 
 ## Install
 
 ```bash
 npm install --save @kaviar/smart
+```
+
+```tsx
+import { Smart, smart } from "@kaviar/smart";
+
+class Counter extends Smart {
+  state = {
+    count: 0,
+  };
+
+  increment() {
+    this.setState({ count: this.state.count + 1 });
+  }
+}
+
+function Component() {
+  const api = useSmart(Counter);
+
+  // Access to api.state
+  // Ability to trigger api.increment()
+}
+
+smart(Counter)(Component);
 ```
 
 ## [Documentation](./DOCUMENTATION.md)
