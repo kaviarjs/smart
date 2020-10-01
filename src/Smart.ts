@@ -4,7 +4,7 @@ const BasicContext = React.createContext(null);
 BasicContext.displayName = "SmartModelContext";
 
 export abstract class Smart<StateModel = any, Config = any> {
-  public abstract state: StateModel;
+  public state: StateModel;
   public stateSetter: (oldState: StateModel) => StateModel;
   public config: Config;
   public static reactContext = React.createContext(null);
