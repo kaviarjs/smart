@@ -1,4 +1,4 @@
-Smart is a very small library which helps decouple state management and non-ui-related actions to separate classes.
+Smart is a very small library which helps decouple state management and non-ui-related actions to separate classes. Behind the scenes it's just hooks, nothing fancy.
 
 Let us a imagine a counter model:
 
@@ -27,15 +27,16 @@ Using it can be done like this:
 
 ```tsx
 function Basic() {
-  // Api here will be a fresh instance of CounterModel + full autocompletio
+  // Api here will be a fresh instance of CounterModel + full autocompletion
   const api = useSmart(CounterModel);
   // Note that you can have multiple "smarts" with different models
 
   // You'll have autocompletion on api.state
-  const { count } = api.state;
+  // This will be re-rendered when state changes
+  const { state } = api;
   return (
     <div>
-      Count: {count}
+      Count: {state.count}
       <br />
       <button onClick={() => api.increment()}>Increment</button>
     </div>
@@ -106,7 +107,7 @@ const Component = smart(HTTPLoader, { endpoint })(Donuts);
 const [api, Provider] = newSmart(HTTPLoader, { endpoint });
 ```
 
-There is another `options` layer when creating a smart:
+There is another argument called `options` when creating a smart:
 
 ```tsx
 smart(CustomModel, config, {
