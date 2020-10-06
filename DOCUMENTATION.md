@@ -86,6 +86,11 @@ class HTTPLoader extends Smart<IState, IConfig> {
     this.load();
   }
 
+  async destroy() {
+    // Perform things such as cleanup when the component gets unmounted
+    // This is very useful for subscriptions()
+  }
+
   load() {
     fetch(this.config.endpoint).then((results) => {
       this.setState({
