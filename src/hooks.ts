@@ -67,6 +67,10 @@ export const newSmart = <T extends Smart<S, U>, S, U>(
 
   useEffect(() => {
     model.init();
+
+    return function cleanup() {
+      model.destroy();
+    };
   }, []);
 
   return [model, Provider];
