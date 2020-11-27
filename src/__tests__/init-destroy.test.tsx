@@ -51,7 +51,6 @@ test("It should work with init() and destroy()", () => {
     const api = useSmart(CounterModel);
 
     const { count } = api.state;
-    console.log(api.state);
     return (
       <div>
         Hello! <br />
