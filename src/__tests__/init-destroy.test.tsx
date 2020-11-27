@@ -3,6 +3,8 @@ import * as TestRenderer from "react-test-renderer";
 import { newSmart, smart, useSmart } from "../hooks";
 import { Smart } from "../Smart";
 
+const StandardContext = React.createContext(null);
+
 interface IState {
   count: number;
   ready?: boolean;
@@ -22,8 +24,8 @@ test("It should work with init() and destroy()", () => {
       count: 1,
     };
 
-    public ready: boolean = false;
-    public destroyed: boolean = false;
+    public ready = false;
+    public destroyed = false;
 
     increment() {
       this.updateState({ count: this.state.count + 1 });
@@ -41,6 +43,8 @@ test("It should work with init() and destroy()", () => {
     async destroy() {
       this.destroyed = true;
     }
+
+    static getContext = () => StandardContext;
   }
 
   function SubTestComponent() {

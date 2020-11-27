@@ -3,11 +3,17 @@ Smart is a very small library which helps decouple state management and non-ui-r
 Let us a imagine a counter model:
 
 ```ts
+import * as React from "react";
 import { Smart } from "@kaviar/smart";
 
 interface IState {
   count: number;
 }
+
+/**
+ * We need to create a static context for each model, because it will allow us to use multiple smart models * together and we must have a way to differentiate them
+ */
+const CounterContext = React.createContext(null);
 
 class CounterModel extends Smart<IState> {
   state: IState = {
@@ -18,6 +24,8 @@ class CounterModel extends Smart<IState> {
     // Imutable state
     this.setState({ count: this.state.count + 1 });
   }
+
+  static getContext = () => CounterContext;
 }
 ```
 
@@ -76,6 +84,8 @@ interface IConfig {
   endpoint: string;
 }
 
+const HTTPLoaderContext = React.createContext(null);
+
 class HTTPLoader extends Smart<IState, IConfig> {
   state: IState = {
     loading: true,
@@ -99,6 +109,8 @@ class HTTPLoader extends Smart<IState, IConfig> {
       });
     });
   }
+
+  static getContext = () => HTTPLoaderContext;
 }
 ```
 

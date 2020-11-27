@@ -1,13 +1,9 @@
 import * as React from "react";
 
-const BasicContext = React.createContext(null);
-BasicContext.displayName = "SmartModelContext";
-
 export abstract class Smart<StateModel = any, Config = any> {
   public state: StateModel;
   public stateSetter: (oldState: StateModel) => StateModel;
   public config: Config;
-  public static reactContext = React.createContext(null);
 
   /**
    * This function should be called only once when the state is created
@@ -28,7 +24,9 @@ export abstract class Smart<StateModel = any, Config = any> {
   async destroy(): Promise<void> {}
 
   static getContext() {
-    return BasicContext;
+    throw new Error(
+      "Please implement the static getContext() method which returns a React context object."
+    );
   }
 
   /**

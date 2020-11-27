@@ -11,6 +11,8 @@ interface IConfig {
   something: boolean;
 }
 
+const StandardContext = React.createContext(null);
+
 class CounterModel extends Smart<IState, IConfig> {
   state = {
     count: 1,
@@ -19,6 +21,8 @@ class CounterModel extends Smart<IState, IConfig> {
   increment() {
     this.setState({ count: this.state.count + 1 });
   }
+
+  static getContext = () => StandardContext;
 }
 
 function SubTestComponent() {
