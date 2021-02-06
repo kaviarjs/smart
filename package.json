@@ -42,7 +42,7 @@
     "jest": "^26.0.0",
     "jest-junit": "^10.0.0",
     "prettier": "^2.0.5",
-    "react": "^16.13.1",
+    "react": "^17.0.1",
     "react-dom": "^16.13.1",
     "react-test-renderer": "^16.13.1",
     "source-map-support": "^0.5.13",
