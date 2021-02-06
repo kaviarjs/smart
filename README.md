@@ -10,13 +10,15 @@
   </a>
 </p>
 
+Smart is a simple tool which allows you to decouple state and logic from your components.
+
 Goodies:
 
 - ✅ Uses React Hooks behind the scenes
 - ✅ Manage state and actions separately from your components
 - ✅ TypeScript auto-completion at every step
 - ✅ Ultra light-weight
-- ✅ Works great with Redux DevTools
+- ✅ Integration with Redux DevTools
 
 ## Install
 
@@ -27,6 +29,7 @@ npm install --save @kaviar/smart
 ```tsx
 import { Smart, smart } from "@kaviar/smart";
 
+// This is where you make api queries and this is where you set or update the state
 class Counter extends Smart {
   state = {
     count: 0,
@@ -37,8 +40,9 @@ class Counter extends Smart {
   }
 }
 
+// Components just call the Counter and use `counter.state`
 function Component() {
-  const api = useSmart(Counter);
+  const counter = useSmart(Counter);
 
   // Access to api.state
   // Ability to trigger api.increment()

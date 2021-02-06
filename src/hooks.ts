@@ -11,17 +11,19 @@ export function setDefaults(defaults: INewSmartOptions) {
   Object.assign(SmartOptionsDefaults, defaults);
 }
 
+type SmartConstructor<S, U> = new (...args: any[]) => Smart<S, U>;
+
 export interface INewSmartOptions {
-  factory?<T extends Smart<S, U>, S, U>(targetType: new () => T, config: U): T;
+  factory?<S, U>(targetType: SmartConstructor<S, U>, config: U): Smart<S, U>;
   useState?: any;
   devTools?: boolean | string;
 }
 
-export const newSmart = <T extends Smart<S, U>, S, U>(
-  targetType: new () => T,
+export const newSmart = <S, U>(
+  targetType: SmartConstructor<S, U>,
   config?: U,
   options?: INewSmartOptions
-): [T, React.ComponentType<any>] => {
+): [Smart<S, U>, React.ComponentType<any>] => {
   options = Object.assign({}, options, SmartOptionsDefaults);
 
   // We are using memo values here to avoid redoing this on every rerender
