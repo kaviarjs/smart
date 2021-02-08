@@ -11,7 +11,8 @@ export function setDefaults(defaults: INewSmartOptions) {
   Object.assign(SmartOptionsDefaults, defaults);
 }
 
-type SmartConstructor<S, U> = new (...args: any[]) => Smart<S, U>;
+type Constructor<T> = { new (...args: any[]): T };
+type SmartConstructor<S, U> = { new (...args: any[]): Smart<S, U> };
 
 export interface INewSmartOptions {
   factory?<S, U>(targetType: SmartConstructor<S, U>, config: U): Smart<S, U>;
@@ -19,11 +20,11 @@ export interface INewSmartOptions {
   devTools?: boolean | string;
 }
 
-export const newSmart = <S, U>(
-  targetType: SmartConstructor<S, U>,
+export const newSmart = <S, U, T extends Smart<S, U>>(
+  targetType: Constructor<T & Smart<S, U>>,
   config?: U,
   options?: INewSmartOptions
-): [Smart<S, U>, React.ComponentType<any>] => {
+): [T, React.ComponentType<any>] => {
   options = Object.assign({}, options, SmartOptionsDefaults);
 
   // We are using memo values here to avoid redoing this on every rerender
@@ -113,3 +114,40 @@ export const useSmart = <T>(modelClass: { new (...args: any[]): T }): T => {
 function getDisplayName(WrappedComponent) {
   return WrappedComponent.displayName || WrappedComponent.name || "Component";
 }
+
+class Base<StateType, ConfigType> {
+  state: StateType;
+  config: ConfigType;
+}
+
+type ExtensionStateType<T> = {
+  number: number;
+  custom: T;
+};
+type ExtensionConfigType<T> = {
+  value?: string;
+  custom?: T;
+};
+class Extension<T> extends Base<
+  ExtensionStateType<T>,
+  ExtensionConfigType<T>
+> {}
+
+class SubExtension extends Extension<string> {
+  getSomething() {}
+}
+
+// type Constructor<T> = { new (...args: []): T };
+
+function factory<S, C, T extends Base<S, C>>(
+  constructorClass: Constructor<T & Base<S, C>>,
+  config: C
+): T {
+  return null;
+}
+
+const api = factory(SubExtension, {
+  value: "Str",
+});
+
+api.getSomething();
