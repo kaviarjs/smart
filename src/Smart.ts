@@ -9,7 +9,10 @@ export abstract class Smart<StateModel = any, Config = any> {
    * This function should be called only once when the state is created
    * @param config
    */
-  setConfig(config: Config) {
+  setConfig(config?: Config) {
+    if (!config) {
+      config = {} as Config;
+    }
     this.config = config;
   }
 
