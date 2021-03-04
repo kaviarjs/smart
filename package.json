@@ -22,7 +22,7 @@
     "gen-doc": "typedoc ./src/index.ts --exclude ./src/__tests__ --out typeDocs --tsconfig tsconfig.json"
   },
   "peerDependencies": {
-    "react": "^16.13.1 | ^17.0.0"
+    "react": ">=16.13.0"
   },
   "dependencies": {},
   "devDependencies": {
@@ -32,6 +32,7 @@
     "@types/graphql": "^0.11.3",
     "@types/jest": "^25.2.3",
     "@types/node": "^8.0.28",
+    "@types/react": "^17.0.2",
     "@typescript-eslint/eslint-plugin": "2.3.0",
     "@typescript-eslint/parser": "2.3.0",
     "chai": "^4.2.0",
@@ -42,9 +43,9 @@
     "jest": "^26.0.0",
     "jest-junit": "^10.0.0",
     "prettier": "^2.0.5",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-test-renderer": "^16.13.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-test-renderer": "^17.0.0",
     "source-map-support": "^0.5.13",
     "typedoc": "^0.19.0",
     "typescript": "^4.1.3"
