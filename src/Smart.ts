@@ -1,9 +1,10 @@
 import * as React from "react";
 
+export type SmartSubscriber = (oldState, newState) => void;
 export abstract class Smart<StateModel = any, Config = any> {
   public state: StateModel;
-  public stateSetter: (oldState: StateModel) => StateModel;
   public config: Config;
+  public subscribers: SmartSubscriber[] = [];
 
   /**
    * This function should be called only once when the state is created
@@ -37,8 +38,27 @@ export abstract class Smart<StateModel = any, Config = any> {
    * @param newStateModel
    */
   setState(newStateModel: StateModel) {
+    const oldState = this.state;
     this.state = newStateModel;
-    this.stateSetter(newStateModel);
+    this.subscribers.forEach((subscriber) => {
+      subscriber(oldState, this.state);
+    });
+  }
+
+  /**
+   * @param subscriber
+   */
+  protected subscribe(subscriber: SmartSubscriber) {
+    if (this.subscribers.indexOf(subscriber) === -1) {
+      this.subscribers.push(subscriber);
+    }
+  }
+
+  /**
+   * @param subscriber
+   */
+  protected unsubscribe(subscriber: SmartSubscriber) {
+    this.subscribers = this.subscribers.filter((s) => s !== subscriber);
   }
 
   /**

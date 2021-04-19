@@ -25,6 +25,12 @@ class CounterModel extends Smart<IState, IConfig> {
   static getContext = () => StandardContext;
 }
 
+function Intermediary(props) {
+  return <SubTestComponent />;
+}
+
+const IntermediaryMemo = React.memo(Intermediary);
+
 function SubTestComponent() {
   const api = useSmart(CounterModel);
 
@@ -48,7 +54,7 @@ test("It should work", () => {
 
     return (
       <Provider>
-        <SubTestComponent />
+        <IntermediaryMemo />
       </Provider>
     );
   }
@@ -84,7 +90,7 @@ test("It should work with factory", () => {
 
     return (
       <Provider>
-        <SubTestComponent />
+        <IntermediaryMemo />
       </Provider>
     );
   }

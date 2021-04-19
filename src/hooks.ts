@@ -2,10 +2,7 @@ import * as React from "react";
 import { useContext, useEffect, useState, useMemo } from "react";
 import { Smart } from "./Smart";
 
-const SmartOptionsDefaults = {
-  useState,
-  devTools: false,
-};
+const SmartOptionsDefaults = {};
 
 export function setDefaults(defaults: INewSmartOptions) {
   Object.assign(SmartOptionsDefaults, defaults);
@@ -16,8 +13,6 @@ type SmartConstructor<S, U> = { new (...args: any[]): Smart<S, U> };
 
 export interface INewSmartOptions {
   factory?<S, U>(targetType: SmartConstructor<S, U>, config: U): Smart<S, U>;
-  useState?: any;
-  devTools?: boolean | string;
 }
 
 export const newSmart = <S, U, T extends Smart<S, U>>(
@@ -29,15 +24,7 @@ export const newSmart = <S, U, T extends Smart<S, U>>(
 
   // We are using memo values here to avoid redoing this on every rerender
   const model = useMemo(() => {
-    let model;
-    if (options?.factory) {
-      model = options.factory(targetType, config);
-    } else {
-      model = new targetType();
-    }
-    model.setConfig(config);
-
-    return model;
+    return createSmartModel<S, U, T>(options, targetType, config);
   }, []);
 
   const Provider = useMemo(() => {
@@ -49,25 +36,8 @@ export const newSmart = <S, U, T extends Smart<S, U>>(
     };
   }, []);
 
-  // Each time we render we need to ensure this is set ok
-  // We use the initial state from the model
-  const useStateArguments = [model.state];
-  if (options.devTools) {
-    if (typeof options.devTools === "string") {
-      useStateArguments.push(options.devTools);
-    } else {
-      // We are adding some randomness to it to avoid collision and confusion when more models are used that have the same name.
-      useStateArguments.push(
-        targetType.name + `(${Math.random().toString(36).slice(-6)})`
-      );
-    }
-  }
-  const [state, setState] = options.useState(...useStateArguments);
-
   // Ensure we are looking at the propper states.
-  model.state = state;
-  model.stateSetter = setState;
-
+  reactToSmartStateChange(model);
   useEffect(() => {
     model.init();
 
@@ -80,6 +50,22 @@ export const newSmart = <S, U, T extends Smart<S, U>>(
 };
 
 type Returnable<T> = (...args: any[]) => T;
+
+function createSmartModel<S, U, T extends Smart<S, U>>(
+  options: INewSmartOptions,
+  targetType: Constructor<T & Smart<S, U>>,
+  config: U
+) {
+  let model;
+  if (options?.factory) {
+    model = options.factory(targetType, config);
+  } else {
+    model = new targetType();
+  }
+  model.setConfig(config);
+
+  return model;
+}
 
 /**
  * Smart creates a wrapper function which accepts a Component as argument
@@ -107,9 +93,31 @@ export function smart<T extends Smart<S, U>, S, U>(
   };
 }
 
-export const useSmart = <T>(modelClass: { new (...args: any[]): T }): T => {
-  return useContext((modelClass as any).getContext());
+export const useSmart = <T extends Smart>(modelClass: {
+  new (...args: any[]): T;
+}): T => {
+  const model = useContext<T>((modelClass as any).getContext());
+  reactToSmartStateChange(model);
+
+  return model;
 };
+
+function reactToSmartStateChange(model) {
+  const [, updateState] = React.useState({});
+  const forceUpdate = React.useCallback(() => updateState({}), []);
+
+  useMemo(() => {
+    // If we put this in useEffect it won't work initially as useEffect can be run async later
+    model.subscribe(forceUpdate);
+    return null;
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      model.unsubscribe(forceUpdate);
+    };
+  }, []);
+}
 
 function getDisplayName(WrappedComponent) {
   return WrappedComponent.displayName || WrappedComponent.name || "Component";

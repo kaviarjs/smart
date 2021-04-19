@@ -135,31 +135,7 @@ smart(CustomModel, config, {
 
     // Configuration is set later via `setConfig()`
   },
-  useState: // You can use the state from `reinspect` to hook ReduxDev Tools
 );
 ```
-
-To be able to use Redux DevTools:
-
-```tsx
-import { setDefaults } from "@kaviar/smart";
-import { useState } from "reinspect";
-
-setDefaults({
-  useState,
-  devTools: true,
-});
-
-// You can add your own custom model name:
-smart(
-  CounterModel,
-  {},
-  {
-    devTools: "Counter",
-  }
-);
-```
-
-More information here: https://github.com/troch/reinspect
 
 To be able to properly manipulate complex models with state, we recommend [immer](https://immerjs.github.io/immer/docs/introduction)
