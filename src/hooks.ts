@@ -2,7 +2,9 @@ import * as React from "react";
 import { useContext, useEffect, useState, useMemo } from "react";
 import { Smart } from "./Smart";
 
-const SmartOptionsDefaults = {};
+const SmartOptionsDefaults: INewSmartOptions = {
+  isolated: false,
+};
 
 export function setDefaults(defaults: INewSmartOptions) {
   Object.assign(SmartOptionsDefaults, defaults);
@@ -13,6 +15,7 @@ type SmartConstructor<S, U> = { new (...args: any[]): Smart<S, U> };
 
 export interface INewSmartOptions {
   factory?<S, U>(targetType: SmartConstructor<S, U>, config: U): Smart<S, U>;
+  isolated?: boolean;
 }
 
 export const newSmart = <S, U, T extends Smart<S, U>>(
@@ -37,7 +40,11 @@ export const newSmart = <S, U, T extends Smart<S, U>>(
   }, []);
 
   // Ensure we are looking at the propper states.
-  reactToSmartStateChange(model);
+  if (options.isolated) {
+    // Don't react to state changes
+  } else {
+    reactToSmartStateChange(model);
+  }
   useEffect(() => {
     model.init();
 
@@ -93,11 +100,26 @@ export function smart<T extends Smart<S, U>, S, U>(
   };
 }
 
-export const useSmart = <T extends Smart>(modelClass: {
-  new (...args: any[]): T;
-}): T => {
+export type UseSmartOptions = {
+  /**
+   * This option is used when you only want to use the api and not react on state changes.
+   */
+  isolated?: boolean;
+};
+
+export const useSmart = <T extends Smart>(
+  modelClass: {
+    new (...args: any[]): T;
+  },
+  options?: UseSmartOptions
+): T => {
   const model = useContext<T>((modelClass as any).getContext());
-  reactToSmartStateChange(model);
+
+  if (options?.isolated) {
+    // If it's isolated it will not react (re-render) when the state changes.
+  } else {
+    reactToSmartStateChange(model);
+  }
 
   return model;
 };

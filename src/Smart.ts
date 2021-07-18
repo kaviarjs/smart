@@ -1,10 +1,17 @@
 import * as React from "react";
 
-export type SmartSubscriber = (oldState, newState) => void;
+export type SmartSubscriber = (oldState, newState) => void | Promise<void>;
+export type SetStateOptions = {
+  /**
+   * You run this when you want to perform multiple operations without dispatching changes yet. You have to manually call .inform() when ready
+   */
+  silent?: boolean;
+};
 export abstract class Smart<StateModel = any, Config = any> {
   public state: StateModel;
   public config: Config;
   public subscribers: SmartSubscriber[] = [];
+  protected previousState?: StateModel;
 
   /**
    * This function should be called only once when the state is created
@@ -37,11 +44,22 @@ export abstract class Smart<StateModel = any, Config = any> {
    * Overrides the whole state with a new model.
    * @param newStateModel
    */
-  setState(newStateModel: StateModel) {
-    const oldState = this.state;
+  setState(newStateModel: StateModel, options?: SetStateOptions) {
+    this.previousState = this.state;
     this.state = newStateModel;
+    if (options?.silent) {
+      // When it's silent we don't inform anyone, you have to manually call .inform()
+    } else {
+      this.inform();
+    }
+  }
+
+  /**
+   * Informs all subscribers of a new change.
+   */
+  inform(previousState?: StateModel) {
     this.subscribers.forEach((subscriber) => {
-      subscriber(oldState, this.state);
+      subscriber(previousState || this.previousState, this.state);
     });
   }
 
@@ -65,10 +83,16 @@ export abstract class Smart<StateModel = any, Config = any> {
    * Updates the state while preserving the other top-level variables
    * @param updateStateModel
    */
-  updateState(updateStateModel: Partial<StateModel>) {
-    this.setState({
-      ...this.state,
-      ...updateStateModel,
-    });
+  updateState(
+    updateStateModel: Partial<StateModel>,
+    options?: SetStateOptions
+  ) {
+    this.setState(
+      {
+        ...this.state,
+        ...updateStateModel,
+      },
+      options
+    );
   }
 }

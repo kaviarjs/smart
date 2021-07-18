@@ -57,7 +57,7 @@ const Component = smart(CounterModel)(Basic);
 Another, more verbose way to create it would be like this:
 
 ```tsx
-const Component = () => {
+function Component{
   const [api, Provider] = newSmart(CounterModel);
 
   return (
@@ -114,7 +114,7 @@ class HTTPLoader extends Smart<IState, IConfig> {
 }
 ```
 
-Using this is super easy:
+Now, we can use this configurable state as so:
 
 ```tsx
 const endpoint = "https://donuts.com/api/flavors";
@@ -139,3 +139,47 @@ smart(CustomModel, config, {
 ```
 
 To be able to properly manipulate complex models with state, we recommend [immer](https://immerjs.github.io/immer/docs/introduction)
+
+## Silence & Isolation
+
+If you want to perform state changes without triggering an event, because maybe you want to do some modifications in batches, you can use the silent: true option:
+
+```ts
+api.updateState({ user }, { silent: true });
+api.updateState({ isLoggedIn: true }, { silent: true });
+// Now send the changes
+api.inform();
+```
+
+If you want to have components which only access the api methods or you simply do not want a re-render when state changes:
+
+```ts
+function Component() {
+  const api = useSmart(SmartModel, {
+    isolated: true,
+  });
+
+  // No re-render on state changes
+}
+```
+
+Same concept applies when you are creating the smart. You may have a component that simply handles instantiations and the children react, thus removing the need of unnecessary re-renders when state changes
+
+```tsx
+function Component() {
+  // The second {} is the config of the model
+  const [api, Provider] = newSmart(
+    CounterModel,
+    {},
+    {
+      isolated: true,
+    }
+  );
+
+  return (
+    <Provider>
+      <Basic />
+    </Provider>
+  );
+}
+```
