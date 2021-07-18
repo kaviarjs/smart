@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.4.0
+
+- Added silent: true (to state changes) and isolated: true (to components) to avoid re-renders
+
 ## 1.3.0
 
 - Moved outside useState and created own state watchers
